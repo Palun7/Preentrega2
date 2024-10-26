@@ -204,7 +204,7 @@ function plataforma(usuarios, articulos){
                 mensaje = `Hola ${usuario_while.nombre}, selecciona una de las siguientes opciones para continuar:\n1) Cerrar sesión.\n2) Ingresar al carrito.\n3) Salir.`
             }
         }else {
-            mensaje = "Bienvenido al carrito, seleccione una de las siguientes opciones para continuar:\n1) Iniciar sesión.\n2) Crear usuario.\n3) Salir.";
+            mensaje = "Bienvenido/a a la plataforma, seleccione una de las siguientes opciones para continuar:\n1) Iniciar sesión.\n2) Crear usuario.\n3) Salir.";
         }
         let opcion = parseInt(prompt(mensaje));
 
@@ -270,12 +270,12 @@ function plataforma(usuarios, articulos){
                         console.log("Usuarios: ", usuarios);
                         break;
                     }else {
-                        alert("Gracias por usar nuestro carrito.");
+                        alert("Gracias por usar mi plataforma.");
                         salir = false;
                         break;
                     }
                 }else {
-                    alert("Gracias por usar nuestro carrito.");
+                    alert("Gracias por usar mi plataforma.");
                     salir = false;
                     break;
                 }
@@ -344,7 +344,7 @@ function plataforma(usuarios, articulos){
             case 8:
                 if(usuario_while != null){
                     if(usuario_while.isAdmin()){
-                        alert("Gracias por usar nuestro carrito.");
+                        alert("Gracias por usar mi plataforma.");
                         salir = false;
                         break;
                     }else{

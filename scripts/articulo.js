@@ -1,6 +1,6 @@
 class Articulo {
 
-    constructor(nombre, marca,costo) {
+    constructor(nombre, marca, costo) {
 
         this.nombre = nombre;
         this.marca = marca;
