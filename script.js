@@ -15,6 +15,14 @@ function generadorId(arreglo) {
 function mostrarUsuarios(arreglo) {
     let mensaje = "";
     for(let i = 0; i < arreglo.length; i++) {
+        mensaje += `${i+1}) ${arreglo[i].nombre}, ${arreglo[i].esAdmin()}\n`;
+    }
+    return mensaje;
+}
+
+function mostrarArticulos(arreglo) {
+    let mensaje = "";
+    for(let i = 0; i < arreglo.length; i++) {
         mensaje += `${i+1}) ${arreglo[i].nombre}\n`;
     }
     return mensaje;
@@ -70,7 +78,7 @@ function eliminarUsuario(arreglo) {
     let mensaje2 = "Indique el ID del usuario que quiera eliminar.";
     let opcion = prompt(`${mensaje1}\n${mensaje2}`);
     let usuario_a_eliminar = arreglo.find((a)=>a.id == opcion-1);
-    if (usuario_a_eliminar != undefined){
+    if (usuario_a_eliminar){
         let confirmacion = confirm(`¿Está seguro que quiere eliminar a ${usuario_a_eliminar.nombre}?`);
         if (confirmacion) {
             let eliminar = arreglo.findIndex((a) => a.id == opcion-1);
@@ -80,10 +88,10 @@ function eliminarUsuario(arreglo) {
                 return usuario_a_eliminar;
             }
         }else {
-            alert("El número ingresado es incorrecto.");
+            return -2;
         }
-    }else {
-        alert("Usuario no encontrado.");
+    }else if (usuario_a_eliminar == undefined) {
+        return -1;
     }
 }
 
@@ -133,7 +141,7 @@ function crearArticulo() {
 }
 
 function eliminarArticulo(arreglo) {
-    let mensaje1 =mostrarUsuarios(arreglo);
+    let mensaje1 =mostrarArticulos(arreglo);
     let mensaje2 = "Indique el nombre del artículo que quiera eliminar.";
     let opcion = prompt(`${mensaje1}\n${mensaje2}`);
     let articulo_a_eliminar = arreglo[opcion-1];
@@ -192,7 +200,6 @@ function carrito(articulos) {
     }
 }
 
-
 function plataforma(usuarios, articulos){
     let salir = true;
     let usuario_while = null;
@@ -210,7 +217,16 @@ function plataforma(usuarios, articulos){
 
         switch (opcion) {
             case 1:
-                if (usuario_while != null) {
+                if (usuario_while == null) {
+                    usuario_while = iniciarSesion(usuarios);
+                    if(usuario_while) {
+                        console.log("Usuario: ", usuario_while);
+                        break;
+                    }else {
+                        usuario_while = null;
+                        break;
+                    }
+                }else {
                     let confirmacion = confirm(`¿Seguro que deseas cerrar sesión ${usuario_while.nombre}?`);
                     if(confirmacion){
                         alert("Sesión cerrada con éxito.");
@@ -218,15 +234,6 @@ function plataforma(usuarios, articulos){
                         break;
                     }else {
                         alert("La sesión continua iniciada.")
-                        break;
-                    }
-                }else {
-                    usuario_while = iniciarSesion(usuarios);
-                    if(usuario_while) {
-                        console.log("Usuario: ", usuario_while);
-                        break;
-                    }else {
-                        usuario_while = null;
                         break;
                     }
                 }
@@ -261,11 +268,24 @@ function plataforma(usuarios, articulos){
                 }
 
             case 3:
-                if (usuario_while != null) {
+                if (usuario_while == null) {
+                    alert("Gracias por usar mi plataforma.");
+                    salir = false;
+                    break;
+                }else {
                     if (usuario_while.isAdmin()) {
                         let corroborar_usuario = eliminarUsuario(usuarios);
-                        if(corroborar_usuario.getNombre() == usuario_while.getNombre()) {
+                        if (corroborar_usuario == -1){
+                            alert("Usuario no encontrado.");
+                            break;
+                        }
+                        else if (corroborar_usuario == -2) {
+                            alert("Operación cancelada.");
+                            break;
+                        }
+                        else if(corroborar_usuario != undefined && corroborar_usuario.getNombre() == usuario_while.getNombre()) {
                             usuario_while = null;
+                            break;
                         }
                         console.log("Usuarios: ", usuarios);
                         break;
@@ -274,14 +294,13 @@ function plataforma(usuarios, articulos){
                         salir = false;
                         break;
                     }
-                }else {
-                    alert("Gracias por usar mi plataforma.");
-                    salir = false;
-                    break;
                 }
 
             case 4:
-                if (usuario_while != null){
+                if (usuario_while == null){
+                    alert("Debes iniciar sesión para acceder.");
+                    break;
+                }else {
                     if (usuario_while.isAdmin()) {
                         adminear(usuarios, usuario_while);
                         break;
@@ -289,13 +308,13 @@ function plataforma(usuarios, articulos){
                         alert("Debes iniciar sesión con un usuario admin para continuar.");
                         break;
                     }
-                }else {
-                    alert("Debes iniciar sesión para acceder.");
-                    break;
                 }
 
             case 5:
-                if (usuario_while != null) {
+                if (usuario_while == null) {
+                    alert("Debes iniciar sesión para acceder.");
+                    break;
+                }else {
                     if (usuario_while.isAdmin()){
                         let articuloNuevo = crearArticulo();
                         if(articuloNuevo){
@@ -307,13 +326,13 @@ function plataforma(usuarios, articulos){
                         alert("Debes iniciar sesión con un usuario admin para continuar.");
                         break;
                     }
-                }else {
-                    alert("Debes iniciar sesión para acceder.");
-                    break;
                 }
 
             case 6:
-                if (usuario_while != null) {
+                if (usuario_while == null) {
+                    alert("Debes iniciar sesión para acceder.");
+                    break;
+                }else {
                     if (usuario_while.isAdmin()) {
                         eliminarArticulo(articulos);
                         console.log("Artículos: ", articulos);
@@ -322,13 +341,13 @@ function plataforma(usuarios, articulos){
                         alert("Debes iniciar sesión con un usuario admin para continuar..");
                         break;
                     }
-                }else {
-                    alert("Debes iniciar sesión para acceder.");
-                    break;
                 }
 
             case 7:
-                if(usuario_while != null){
+                if(usuario_while == null){
+                    alert("El numero ingresado es incorrecto, intente nuevamente.");
+                    break;
+                }else{
                     if(usuario_while.isAdmin()){
                         carrito(articulos);
                         break;
@@ -336,13 +355,13 @@ function plataforma(usuarios, articulos){
                         alert("El numero ingresado es incorrecto, intente nuevamente.");
                         break;
                     }
-                }else{
-                    alert("El numero ingresado es incorrecto, intente nuevamente.");
-                    break;
                 }
 
             case 8:
-                if(usuario_while != null){
+                if(usuario_while == null){
+                    alert("El numero ingresado es incorrecto, intente nuevamente.");
+                    break;
+                }else{
                     if(usuario_while.isAdmin()){
                         alert("Gracias por usar mi plataforma.");
                         salir = false;
@@ -351,9 +370,6 @@ function plataforma(usuarios, articulos){
                         alert("El numero ingresado es incorrecto, intente nuevamente.");
                         break;
                     }
-                }else{
-                    alert("El numero ingresado es incorrecto, intente nuevamente.");
-                    break;
                 }
 
             default:
@@ -362,6 +378,5 @@ function plataforma(usuarios, articulos){
         }
     }
 }
-
 
 plataforma(usuarios, articulos);
