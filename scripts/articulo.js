@@ -5,6 +5,12 @@ class Articulo {
         this.nombre = nombre;
         this.marca = marca;
         this.costo = costo;
+        this.id = null
+    }
+
+    generarId(id) {
+
+        return this.id = id;
     }
 
     getIva() {

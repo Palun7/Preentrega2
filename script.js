@@ -15,7 +15,7 @@ function generadorId(arreglo) {
 function mostrarUsuarios(arreglo) {
     let mensaje = "";
     for(let i = 0; i < arreglo.length; i++) {
-        mensaje += `${i+1}) ${arreglo[i].nombre}, ${arreglo[i].esAdmin()}\n`;
+        mensaje += `${arreglo[i].id+1}) ${arreglo[i].nombre}, ${arreglo[i].esAdmin()}\n`;
     }
     return mensaje;
 }
@@ -23,7 +23,7 @@ function mostrarUsuarios(arreglo) {
 function mostrarArticulos(arreglo) {
     let mensaje = "";
     for(let i = 0; i < arreglo.length; i++) {
-        mensaje += `${i+1}) ${arreglo[i].nombre}\n`;
+        mensaje += `${arreglo[i].id+1}) ${arreglo[i].nombre} - $${arreglo[i].getIva()}\n`;
     }
     return mensaje;
 }
@@ -125,13 +125,15 @@ function adminear(arreglo, usuario) {
     }
 }
 
-function crearArticulo() {
+function crearArticulo(id) {
     let nombre = prompt("Ingrese nombre del artículo.");
     let marca = prompt("Ingrese la marca del artículo.")
     let costo = parseFloat(prompt("Ingrese el costo del artículo."));
 
     if (nombre && marca && !isNaN(costo) && costo != null) {
         let articulo = new Articulo(nombre, marca, costo);
+        id++
+        articulo.generarId(id)
         articulos.push(articulo);
         return articulo;
     }else {
@@ -144,11 +146,12 @@ function eliminarArticulo(arreglo) {
     let mensaje1 =mostrarArticulos(arreglo);
     let mensaje2 = "Indique el nombre del artículo que quiera eliminar.";
     let opcion = prompt(`${mensaje1}\n${mensaje2}`);
-    let articulo_a_eliminar = arreglo[opcion-1];
+    let articulo_a_eliminar = arreglo.find((a)=>a.id == opcion - 1);
     if (articulo_a_eliminar != undefined){
         let confirmacion = confirm(`¿Está seguro que quiere eliminar el artículo ${articulo_a_eliminar.nombre}?`);
         if (confirmacion) {
-            arreglo.splice(articulo_a_eliminar, 1);
+            eliminar = arreglo.findIndex((a)=> a.id == articulo_a_eliminar.id);
+            arreglo.splice(eliminar, 1);
             alert(`El artículo ${articulo_a_eliminar.nombre} ha sido eliminado correctamente.`);
         }else {
             alert("El Artículo no fue eliminado.");
@@ -166,27 +169,51 @@ function recorrerCarrito(arreglo) {
     return carrito;
 }
 
-function carrito(articulos) {
-    salir = true;
-    let compra = [];
-    let total = 0
-    while (salir) {
-        let mensaje1 = "";
-        for (let i = 0; i < articulos.length; i++){
-            mensaje1 += `${i+1}) ${articulos[i].paraCarrito()}\n`;
+function crearCompra(carrito){
+    if (carrito.length == 0) {
+        return [];
+    }else {
+        let compra = [];
+        for(let i of carrito) {
+            compra.push(`${i.paraCarrito()}\n`);
         }
-        let mensaje2 = "Ingrese el número del articulo que quiere comprar. (para finalizar presione cancelar).";
-        let opcion = prompt(`${mensaje1}\n${mensaje2}`);
+        return compra;
+    }
+}
+
+function Carrito(articulos, carrito) {
+    salir = true;
+    let compra = crearCompra(carrito);
+    let total = 0;
+    if(carrito.length != 0){
+        for(let i of carrito){
+            total += i.getIva();
+        }
+    }
+    while (salir) {
+        let mensaje = "Carrito vacio.\n\n";
+        if(carrito.length != 0){
+            mensaje = "Tu carrito tiene:\n";
+            for(let i = 0; i < carrito.length; i++) {
+                mensaje += `${carrito[i].paraCarrito()}\n`;
+            }
+        }
+        let mensaje1 = "\nArticulos para agregar al carrito:\n";
+        mensaje1 += mostrarArticulos(articulos);
+        let mensaje2 = "Ingrese el número del articulo que quiere comprar (para finalizar presione cancelar).";
+        let opcion = prompt(`${mensaje}${mensaje1}\n${mensaje2}`);
         let articulo = articulos[opcion -1];
         if(opcion == null) {
             salir = false;
             let carrito_final = recorrerCarrito(compra);
             alert(`Tu compra fue:\n${carrito_final}\nMonto a pagar: $${total}.`);
+            return carrito;
         }
         else if (articulo) {
             let confirmacion = confirm(`¿Seguro que quiere sumar ${articulo.nombre} al carrito?`);
             if (confirmacion) {
                 compra.push(` ${articulo.paraCarrito()}\n`);
+                carrito.push(articulo);
                 total += articulo.getIva();
                 let carrito_parcial = recorrerCarrito(compra);
                 alert(`Tu carrito tiene:\n${carrito_parcial}\nMonto total hasta ahora: $${total}.`);
@@ -200,9 +227,69 @@ function carrito(articulos) {
     }
 }
 
+function descarrear(carrito) {
+    salir = true;
+    let compra = crearCompra(carrito);
+    let total = 0;
+    for (let i of carrito) {
+        total += i.getIva();
+    }
+    while(salir){
+        let mensaje = "Carrito vacio.\n\n";
+        let mensaje1 = "";
+        if(carrito.length != 0){
+            mensaje = "Tu carrito tiene:\n";
+            for(let i = 0; i < carrito.length; i++) {
+                mensaje += `${carrito[i].paraCarrito()}\n`;
+            }
+            mensaje1 = "\nArticulos a sacar del carrito:\n";
+            mensaje1 += mostrarArticulos(articulos);
+        }
+        let mensaje2 = "Indique el número del producto que quiere sacar (para finalizar presione cancelar).";
+        let opcion = prompt(`${mensaje}\n${mensaje1}\n${mensaje2}`);
+        let sacar = carrito.find((a)=>a.id == opcion - 1);
+        console.log(sacar);
+        if (opcion == null){
+            salir = false;
+            let carrito_final = recorrerCarrito(compra);
+            alert(`Tu compra es:\n${carrito_final}\nMonto total a abonar: $${total}.`);
+            return carrito;
+        }else if(sacar){
+            let confirmacion = confirm(`¿Seguro que quiere sacar ${sacar.nombre} del carrito?`);
+            if(confirmacion){
+                eliminar = carrito.findIndex((a)=> a.id == sacar.id);
+                carrito.splice(eliminar, 1);
+                compra.splice(eliminar, 1);
+                total -= sacar.getIva();
+                let carrito_parcial = recorrerCarrito(compra);
+                alert(`Tu carrito tiene:\n${carrito_parcial}\nMonto total hasta ahora: $${total}.`);
+            }else {
+                alert("No se sacó nada del carrito.");
+            }
+        }else{
+            alert("No se encontró el artículo.");
+        }
+    }
+}
+
+function modificarCarrito(articulos, carrito) {
+    let opcion = prompt("Seleccione una de las siguientes opciones.\n1) Agregar productos al carrito.\n2) Sacar productos del carrito.");
+    if(opcion == 1){
+        carrito = Carrito(articulos, carrito);
+        return carrito;
+    }else if(opcion == 2){
+        carrito = descarrear(carrito);
+        return carrito;
+    }else {
+        alert("Opción no válida, intente nuevamente.");
+        return carrito;
+    }
+}
+
 function plataforma(usuarios, articulos){
     let salir = true;
     let usuario_while = null;
+    let carrito = new Array();
     while (salir) {
         if (usuario_while != null) {
             if (usuario_while.isAdmin()) {
@@ -231,6 +318,7 @@ function plataforma(usuarios, articulos){
                     if(confirmacion){
                         alert("Sesión cerrada con éxito.");
                         usuario_while = null;
+                        carrito = new Array();
                         break;
                     }else {
                         alert("La sesión continua iniciada.")
@@ -243,8 +331,13 @@ function plataforma(usuarios, articulos){
                     alert("Debes cerrar sesión para crear un usuario nuevo.");
                     break;
                 }else if (usuario_while != null && !usuario_while.isAdmin()){
-                    carrito(articulos);
-                    break;
+                    if(carrito.length != 0) {
+                        carrito = modificarCarrito(articulos, carrito);
+                        break;
+                    }else {
+                        carrito = Carrito(articulos, carrito);
+                        break;
+                    }
                 }else {
                     let id = generadorId(usuarios);
                     usuario_while = crearUsuario(id, usuarios);
@@ -316,7 +409,8 @@ function plataforma(usuarios, articulos){
                     break;
                 }else {
                     if (usuario_while.isAdmin()){
-                        let articuloNuevo = crearArticulo();
+                        let id = generadorId(articulos);
+                        let articuloNuevo = crearArticulo(id);
                         if(articuloNuevo){
                             alert(`El articulo ${articuloNuevo.nombre} se creo correctamente.`);
                         }
@@ -349,8 +443,13 @@ function plataforma(usuarios, articulos){
                     break;
                 }else{
                     if(usuario_while.isAdmin()){
-                        carrito(articulos);
-                        break;
+                        if(carrito.length != 0) {
+                            carrito = modificarCarrito(articulos, carrito);
+                            break;
+                        }else {
+                            carrito = Carrito(articulos, carrito);
+                            break;
+                        }
                     }else{
                         alert("El numero ingresado es incorrecto, intente nuevamente.");
                         break;
@@ -378,5 +477,14 @@ function plataforma(usuarios, articulos){
         }
     }
 }
+
+let id = generadorId(articulos);
+coca.generarId(id);
+id = generadorId(articulos);
+id++
+lays.generarId(id);
+id = generadorId(articulos);
+id++
+block.generarId(id);
 
 plataforma(usuarios, articulos);
