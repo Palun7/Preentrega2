@@ -215,8 +215,6 @@ function Carrito(articulos, carrito) {
                 compra.push(` ${articulo.paraCarrito()}\n`);
                 carrito.push(articulo);
                 total += articulo.getIva();
-                let carrito_parcial = recorrerCarrito(compra);
-                alert(`Tu carrito tiene:\n${carrito_parcial}\nMonto total hasta ahora: $${total}.`);
             }else {
                 alert("no se agregó el artículo.");
             }
@@ -261,8 +259,6 @@ function descarrear(carrito) {
                 carrito.splice(eliminar, 1);
                 compra.splice(eliminar, 1);
                 total -= sacar.getIva();
-                let carrito_parcial = recorrerCarrito(compra);
-                alert(`Tu carrito tiene:\n${carrito_parcial}\nMonto total hasta ahora: $${total}.`);
             }else {
                 alert("No se sacó nada del carrito.");
             }
@@ -477,14 +473,5 @@ function plataforma(usuarios, articulos){
         }
     }
 }
-
-let id = generadorId(articulos);
-coca.generarId(id);
-id = generadorId(articulos);
-id++
-lays.generarId(id);
-id = generadorId(articulos);
-id++
-block.generarId(id);
 
 plataforma(usuarios, articulos);

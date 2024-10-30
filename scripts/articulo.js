@@ -37,6 +37,9 @@ class Articulo {
 const articulos = [];
 
 let coca = new Articulo("Coca", "Coca-Cola", 2300);
+coca.generarId(0);
 let lays = new Articulo("Lays", "Pepsico", 1900);
+lays.generarId(1);
 let block = new Articulo("Block", "Cofler", 1200);
+block.generarId(2);
 articulos.push(coca, lays, block);
