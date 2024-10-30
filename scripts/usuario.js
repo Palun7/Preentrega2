@@ -6,6 +6,7 @@ class Usuario {
         this.contraseña = contraseña;
         this.id = null;
         this.admin = false;
+        this.carrito = new Array();
     }
 
     generarId(id) {
@@ -49,6 +50,26 @@ class Usuario {
     deshacerAdmin() {
 
         this.admin = false;
+    }
+
+    longitudCarrito() {
+
+        return this.carrito.length;
+    }
+
+    mostrarCarrito() {
+
+        return this.carrito;
+    }
+
+    agregarArticulo(articulo) {
+
+        return this.carrito.push(articulo);
+    }
+
+    borrarArticulo(articulo) {
+
+        return this.carrito.splice(articulo, 1);
     }
 }
 

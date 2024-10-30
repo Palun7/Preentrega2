@@ -225,7 +225,7 @@ function Carrito(articulos, carrito) {
     }
 }
 
-function descarrear(carrito) {
+function descarrear(carrito, articulos) {
     salir = true;
     let compra = crearCompra(carrito);
     let total = 0;
@@ -274,7 +274,7 @@ function modificarCarrito(articulos, carrito) {
         carrito = Carrito(articulos, carrito);
         return carrito;
     }else if(opcion == 2){
-        carrito = descarrear(carrito);
+        carrito = descarrear(carrito, articulos);
         return carrito;
     }else {
         alert("Opción no válida, intente nuevamente.");
@@ -302,6 +302,7 @@ function plataforma(usuarios, articulos){
             case 1:
                 if (usuario_while == null) {
                     usuario_while = iniciarSesion(usuarios);
+                    carrito = usuario_while.mostrarCarrito();
                     if(usuario_while) {
                         console.log("Usuario: ", usuario_while);
                         break;
