@@ -1,14 +1,32 @@
 * {
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
 }
 
 body {
     background-color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 h1, h2 , p{
     color: skyblue;
     text-align: center;
     margin-top: 2em;
+}
+
+#boton_plataforma {
+    width: fit-content;
+    margin-top: 2em;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid black;
+    background-color: gray;
+    transition-duration: .3s;
+}
+
+#boton_plataforma:hover {
+    background-color: aquamarine;
 }
