@@ -12,3 +12,5 @@
 > Un usuario logueado (sea o no admin) puede ingresar al carrito donde podrá cargar los articulos que esten creados y una vez finalizada la compra le mostrará los productos comprados y cuanto deberá abonar.
 
 > Al ingresar nuevamente al carrito habiendo comprado algo anteriormente, se le preguntará si quiere seguir sumando articulos o si quiere sacar articulos del carrito.
+
+> El carrito es particular de cada usuario, por lo que si cierra sesion e ingresa otro usuario el carrito estará vacio para este nuevo usuario. En caso que el primer usuario inicie sesion nuevamente tendrá su carrito como lo dejó la ultima vez.
